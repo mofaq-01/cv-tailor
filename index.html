@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CV Tailor — Tamim Al Faiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ── Tokens ──────────────────────────────────────────────────── */
+:root {
+  --bg:        #0B0C0F;
+  --surface:   #13151A;
+  --card:      #1A1D24;
+  --border:    #252830;
+  --border2:   #32363F;
+  --text:      #E4E6EE;
+  --muted:     #6B7280;
+  --label:     #9CA3AF;
+  --accent:    #6366F1;
+  --accent-lo: #6366F118;
+  --accent-bd: #6366F155;
+  --success:   #34D399;
+  --warn:      #FBBF24;
+  --err:       #F87171;
+  --teal:      #2DD4BF;
+  --teal-lo:   #2DD4BF18;
+  --r:         8px;
+  --font:      'Space Grotesk', system-ui, sans-serif;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html,body { height:100%; background:var(--bg); color:var(--text);
+  font-family:var(--font); font-size:14px; line-height:1.6; }
+
+/* ── App shell ───────────────────────────────────────────────── */
+#app { display:grid; grid-template-rows:54px 1fr; height:100vh; overflow:hidden; }
+
+/* ── Header ──────────────────────────────────────────────────── */
+header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; border-bottom:1px solid var(--border);
+  background:var(--surface); gap:12px; flex-shrink:0;
+}
+.hdr-brand { display:flex; align-items:center; gap:9px;
+  font-size:14px; font-weight:600; white-space:nowrap; }
+.hdr-brand .gem { color:var(--accent); font-size:20px; line-height:1; }
+.hdr-api { display:flex; align-items:center; gap:8px; flex:1; max-width:440px; }
+.hdr-api input {
+  flex:1; background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--r); color:var(--text); font-family:var(--font);
+  font-size:13px; padding:6px 12px; outline:none; transition:border-color .15s;
+}
+.hdr-api input:focus { border-color:var(--accent); }
+.hdr-api input::placeholder { color:var(--muted); }
+.api-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); flex-shrink:0; transition:background .2s; }
+.api-dot.ok  { background:var(--success); box-shadow:0 0 6px var(--success); }
+.api-dot.err { background:var(--err); }
+.btn-sm {
+  background:none; border:1px solid var(--border); border-radius:var(--r);
+  color:var(--muted); font-family:var(--font); font-size:12px;
+  padding:5px 11px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s;
+}
+.btn-sm:hover { border-color:var(--accent); color:var(--text); }
+#env-badge {
+  font-size:10px; font-weight:600; letter-spacing:.07em;
+  padding:3px 9px; border-radius:100px; border:1px solid; white-space:nowrap; flex-shrink:0;
+}
+
+/* ── Two-panel workspace ─────────────────────────────────────── */
+#workspace { display:grid; grid-template-columns:380px 1fr; overflow:hidden; }
+
+/* ── Left panel ──────────────────────────────────────────────── */
+#left {
+  background:var(--surface); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.panel-label {
+  padding:14px 18px 6px; font-size:10px; font-weight:700;
+  letter-spacing:.12em; color:var(--muted); text-transform:uppercase; flex-shrink:0;
+}
+.jd-wrap { flex:1; min-height:0; padding:6px 18px; }
+.jd-wrap textarea {
+  width:100%; height:100%; background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--r); color:var(--text); font-family:var(--font);
+  font-size:13px; line-height:1.65; padding:12px 14px; resize:none; outline:none;
+  transition:border-color .15s;
+}
+.jd-wrap textarea:focus { border-color:var(--accent); }
+.jd-wrap textarea::placeholder { color:var(--muted); }
+
+/* flat keyword chips (extracted, shown after step 2) */
+#kw-strip { padding:0 18px 8px; display:flex; flex-wrap:wrap; gap:5px;
+  max-height:68px; overflow:hidden; flex-shrink:0; }
+.kw-chip {
+  padding:2px 8px; border-radius:100px; font-size:11px; font-weight:500;
+  border:1px solid var(--accent-bd); background:var(--accent-lo); color:var(--accent);
+}
+
+/* pipeline steps */
+.pipeline { padding:0 18px; display:flex; flex-direction:column; gap:5px; flex-shrink:0; }
+.step {
+  display:flex; align-items:center; gap:10px; padding:8px 12px;
+  border-radius:var(--r); border:1px solid var(--border); background:var(--bg);
+  font-size:13px; color:var(--muted); transition:all .2s;
+}
+.step.active { border-color:var(--accent); color:var(--text); background:var(--accent-lo); }
+.step.done   { border-color:#34D39940; color:var(--success); }
+.step.error  { border-color:#F8717140; color:var(--err); }
+.step-icon   { width:15px; height:15px; flex-shrink:0; opacity:.6; }
+.step-num    { font-size:10px; font-weight:700; width:16px; text-align:center; flex-shrink:0; }
+.spinner {
+  width:15px; height:15px; border:2px solid var(--accent); border-top-color:transparent;
+  border-radius:50%; animation:spin .65s linear infinite; flex-shrink:0;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.status-bar { padding:6px 18px 4px; font-size:12px; color:var(--muted); min-height:28px; flex-shrink:0; }
+.status-bar.ok  { color:var(--success); }
+.status-bar.err { color:var(--err); }
+
+.btn-gen {
+  margin:0 18px 18px; padding:12px 20px; background:var(--accent);
+  color:#fff; font-family:var(--font); font-size:14px; font-weight:600;
+  border:none; border-radius:var(--r); cursor:pointer; display:flex;
+  align-items:center; justify-content:center; gap:8px;
+  transition:opacity .15s, box-shadow .15s; flex-shrink:0;
+}
+.btn-gen:hover:not(:disabled) { opacity:.9; box-shadow:0 0 22px #6366F155; }
+.btn-gen:disabled { opacity:.38; cursor:not-allowed; }
+
+/* ── Right panel ─────────────────────────────────────────────── */
+#right { display:flex; flex-direction:column; overflow:hidden; background:var(--bg); }
+.tabs {
+  display:flex; align-items:center; gap:3px; padding:10px 20px 0;
+  border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.tab-lbl { font-size:10px; font-weight:700; letter-spacing:.12em;
+  color:var(--muted); text-transform:uppercase; margin-right:10px; }
+.tab {
+  padding:7px 16px; background:none; border:none;
+  border-bottom:2px solid transparent; color:var(--muted);
+  font-family:var(--font); font-size:13px; font-weight:500;
+  cursor:pointer; transition:color .15s,border-color .15s; margin-bottom:-1px;
+}
+.tab.on { color:var(--text); border-bottom-color:var(--accent); }
+
+.preview { flex:1; min-height:0; overflow-y:auto; position:relative; }
+
+/* empty state */
+#empty {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  height:100%; gap:10px; color:var(--muted);
+}
+#empty svg { opacity:.3; }
+#empty p { font-size:13px; }
+
+/* ─── Output layers ──────────────────────────────────────────── */
+.out-layer { display:none; }
+.out-layer.on { display:block; }
+
+/* A — Tier label strip */
+#out-tiers { padding:18px 20px 0; }
+.tier-row {
+  display:grid; grid-template-columns:1fr 1fr 1fr 1.4fr;
+  border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:14px;
+}
+.tier-cell { padding:9px 13px; border-right:1px solid var(--border); background:var(--card); }
+.tier-cell:last-child { border-right:none; }
+.tier-cell-lbl { font-size:9.5px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.tier-cell-val { font-size:13px; font-weight:600; color:var(--text); }
+.tier-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
+.tier-chip {
+  font-size:10.5px; font-weight:500; padding:2px 8px; border-radius:100px;
+  border:1px solid var(--accent-bd); background:var(--accent-lo); color:var(--accent);
+}
+
+/* B — Summary */
+#out-summary { padding:0 20px; }
+.summary-card {
+  border:1px solid var(--border); border-radius:var(--r);
+  background:var(--card); padding:14px 16px; margin-bottom:14px;
+}
+.summary-lbl { font-size:10px; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.summary-pitch { font-size:14px; font-weight:700; color:var(--accent); margin-bottom:5px; }
+.summary-body { font-size:13px; line-height:1.7; color:var(--text); }
+
+/* C — Registry tree */
+#out-tree { padding:0 20px; }
+.tree-sec-lbl { font-size:10px; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+.tree-domain {
+  border:1px solid var(--border); border-radius:var(--r);
+  overflow:hidden; margin-bottom:8px;
+}
+.tree-domain.hit { border-color:var(--accent-bd); }
+.tree-dom-hdr {
+  padding:8px 13px; background:var(--card); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.tree-dom-name { font-size:12px; font-weight:600; color:var(--text); }
+.tree-dom-badge {
+  font-size:10px; font-weight:600; padding:2px 8px; border-radius:100px;
+}
+.tree-dom-badge.has  { background:var(--accent-lo); color:var(--accent); border:1px solid var(--accent-bd); }
+.tree-dom-badge.zero { background:transparent; color:var(--muted); border:1px solid var(--border); }
+.tree-sd { padding:7px 13px; border-bottom:1px solid var(--border); }
+.tree-sd:last-child { border-bottom:none; }
+.tree-sd-name { font-size:10.5px; font-weight:600; color:var(--label); margin-bottom:5px; }
+.tree-leaves { display:flex; flex-wrap:wrap; gap:4px; }
+.leaf {
+  font-size:10.5px; padding:2px 8px; border-radius:100px;
+  border:1px solid var(--border); background:var(--bg); color:var(--muted);
+}
+.leaf.hit {
+  border-color:var(--accent-bd); background:var(--accent-lo);
+  color:var(--accent); font-weight:500;
+}
+
+/* D — Slot extraction */
+#out-slots { padding:0 20px; }
+.slots-sec-lbl { font-size:10px; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+.slot-job-group { border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:8px; }
+.slot-job-hdr {
+  padding:8px 13px; background:var(--card); border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.slot-job-title { font-size:12px; font-weight:600; color:var(--text); }
+.slot-job-emp { font-size:11px; color:var(--muted); }
+.slot-rows { padding:6px 13px; }
+.slot-row {
+  display:grid; grid-template-columns:110px 1fr; gap:8px;
+  padding:5px 0; border-bottom:1px solid var(--border); align-items:start;
+}
+.slot-row:last-child { border-bottom:none; }
+.slot-disc { font-size:11px; font-weight:600; color:var(--accent); padding-top:2px; }
+.slot-chips { display:flex; flex-wrap:wrap; gap:4px; }
+.slot-chip {
+  font-size:10.5px; padding:2px 8px; border-radius:100px;
+  border:1px solid var(--border); background:var(--bg); color:var(--label);
+}
+.slot-chip .slbl { font-size:9.5px; color:var(--muted); text-transform:uppercase;
+  letter-spacing:.04em; margin-right:3px; }
+.slot-chip.filled { border-color:var(--accent-bd); background:var(--accent-lo); color:var(--text); }
+.slot-chip.empty  { opacity:.4; font-style:italic; }
+
+/* E — 24 bullets */
+#out-bullets { padding:0 20px 20px; }
+.bullet-job-block { margin-bottom:20px; }
+.bjb-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:1px; }
+.bjb-meta  { font-size:11px; color:var(--muted); margin-bottom:8px; }
+.bullet-line {
+  padding:8px 12px; background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r); margin-bottom:5px;
+}
+.bdis { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--accent); display:block; margin-bottom:3px; }
+.btext { font-size:13px; line-height:1.7; color:var(--text); font-family:monospace; }
+
+/* Raw text view */
+#out-raw { display:none; padding:18px 20px; }
+#out-raw.on { display:block; }
+#out-raw pre { font-family:'Fira Code',monospace; font-size:12.5px; color:#9CA3AF;
+  line-height:1.8; white-space:pre-wrap; word-break:break-word; }
+
+/* Action bar */
+.action-bar {
+  display:flex; gap:8px; padding:12px 20px; border-top:1px solid var(--border);
+  background:var(--surface); flex-shrink:0;
+}
+.btn-act {
+  display:flex; align-items:center; gap:6px; padding:8px 15px;
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  color:var(--label); font-family:var(--font); font-size:13px; font-weight:500;
+  cursor:pointer; transition:border-color .15s,color .15s;
+}
+.btn-act:hover:not(:disabled) { border-color:var(--accent); color:var(--text); }
+.btn-act:disabled { opacity:.35; cursor:not-allowed; }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- Header -->
+<header>
+  <div class="hdr-brand"><span class="gem">◆</span> CV Tailor — Tamim Al Faiz</div>
+  <div class="hdr-api">
+    <div class="api-dot" id="apiDot"></div>
+    <input id="apiKey" type="password" placeholder="sk-ant-… API key" autocomplete="off"/>
+    <button class="btn-sm" onclick="testApi()">Test</button>
+  </div>
+  <div id="env-badge"></div>
+</header>
+
+<!-- Workspace -->
+<div id="workspace">
+
+  <!-- Left panel -->
+  <div id="left">
+    <div class="panel-label">Job Description</div>
+    <div class="jd-wrap">
+      <textarea id="jdText" placeholder="Paste the full job description here…"></textarea>
+    </div>
+
+    <div id="kw-strip"></div>
+
+    <div class="pipeline">
+      <div class="step" id="s0">
+        <span class="step-num">1</span>
+        <span class="step-icon">⬡</span>
+        Classify role &amp; build summary
+      </div>
+      <div class="step" id="s1">
+        <span class="step-num">2</span>
+        <span class="step-icon">⬡</span>
+        Extract keywords into registry tree
+      </div>
+      <div class="step" id="s2">
+        <span class="step-num">3</span>
+        <span class="step-icon">⬡</span>
+        Fill 24-bullet bank
+      </div>
+      <div class="step" id="s3">
+        <span class="step-num">4</span>
+        <span class="step-icon">⬡</span>
+        Domain diversity pass
+      </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">Waiting for job description…</div>
+
+    <button class="btn-gen" id="genBtn" disabled onclick="generate()">
+      ✦ Generate tailored bullets
+    </button>
+  </div>
+
+  <!-- Right panel -->
+  <div id="right">
+    <div class="tabs">
+      <span class="tab-lbl">Output</span>
+      <button class="tab on" id="tabB" onclick="switchTab('bullets')">Bullets</button>
+      <button class="tab"    id="tabT" onclick="switchTab('text')">Plain text</button>
+    </div>
+
+    <div class="preview" id="preview">
+      <!-- Empty state -->
+      <div id="empty">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        <p>Tailored bullets will appear here</p>
+      </div>
+
+      <!-- A — Tier labels -->
+      <div id="out-tiers" class="out-layer"></div>
+
+      <!-- B — Summary -->
+      <div id="out-summary" class="out-layer"></div>
+
+      <!-- C — Registry tree -->
+      <div id="out-tree" class="out-layer"></div>
+
+      <!-- D — Slot extraction -->
+      <div id="out-slots" class="out-layer"></div>
+
+      <!-- E — Bullets -->
+      <div id="out-bullets" class="out-layer"></div>
+
+      <!-- Raw text (tab 2) -->
+      <div id="out-raw"></div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-act" id="btnCopy" disabled onclick="copyTxt()">⎘ Copy</button>
+      <button class="btn-act" id="btnDl"   disabled onclick="dlTxt()">↓ Download .txt</button>
+    </div>
+  </div>
+
+</div><!-- /workspace -->
+</div><!-- /app -->
+
+<script src="app.js"></script>
+</body>
+</html>
